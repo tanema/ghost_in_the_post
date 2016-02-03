@@ -69,7 +69,9 @@ GhostInThePost can be configured in an initializer
 GhostInThePost.config = {
   phantomjs_path: "/usr/local/bin/phantomjs", #[required] path of phantomjs, if this is not set there will be an error
   includes: ["application.js"],               #global include of a javascript file, this will be injected into every email
-  remove_js_tags: true                        #remove script tags after javascript has been processed
+  remove_js_tags: true,                       #remove script tags after javascript has been processed
+  timeout: 1000,                              #timeout after js has been inserted to make sure it is run
+  wait_event: 'ghost_in_the_post:done'        #an event that can be fire on the document to trigger finish of the processing early
 }
 ```
 

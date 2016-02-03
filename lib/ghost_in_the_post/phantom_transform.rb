@@ -2,55 +2,60 @@ module GhostInThePost
   class PhantomTransform
     PHANTOMJS_SCRIPT = File.expand_path('../phantom/staticize.js', __FILE__)
 
-    def initialize(html, included_scripts=[])
+    def initialize(html, timeout=nil, wait_event=nil, included_scripts=[])
       @html = html
+      @timeout = timeout || GhostInThePost.timeout
+      @wait_event = wait_event || GhostInThePost.wait_event
       @included_scripts = Array(included_scripts).compact
     end
 
     def transform
-      injectable_scripts.any? ? transform_with_injections : simple_transform
-    end
-
-    private
-
-    def command
-      [
-        GhostInThePost.phantomjs_path, 
-        PHANTOMJS_SCRIPT, 
-        @html,
-        GhostInThePost.remove_js_tags
-      ]
-    end
-
-    #there is scripts to inject so create a tmp file to put them all in
-    def transform_with_injections
-      #set output to just html so that if there is an error that is caught it will
-      #at least return valid html
       output = @html
       begin
-        #generate a tempfile with all the js that we need so that phantom can inject
-        #easily and not have to max out a single command
-        file = Tempfile.new(['inject', '.js'])
-        injectable_scripts.map do |script|
-          asset = find_asset_in_pipeline(script)
-          file.write(asset.to_s) unless asset.nil?
-        end.compact
-        file.close #closing the file makes it accessible by phantom
-
-        #generate the html with the javascript
-        output = IO.popen(command + [file.path]){|io| io.read}
-
-        file.unlink
-      rescue => e
-        #clean up the temp file
-        file.unlink
+        htmlfile = html_file()
+        jsfile = js_file()
+        p command(htmlfile, jsfile)
+        output = IO.popen(command(htmlfile, jsfile)){|io| io.read}
+      ensure
+        htmlfile.unlink unless htmlfile.nil?
+        jsfile.unlink unless jsfile.nil?
       end
       output
     end
 
-    #no scripts to inject so just run the command
-    def simple_transform
-      IO.popen(command){|io| io.read}
+    private
+
+    def command(htmlfile, jsfile)
+      [
+        GhostInThePost.phantomjs_path, 
+        PHANTOMJS_SCRIPT, 
+        htmlfile.path,
+        GhostInThePost.remove_js_tags,
+        jsfile.path,
+        @timeout,
+        @wait_event,
+      ].map(&:to_s)
+    end
+
+    #generate a tempfile with all the html that we need so that phantom can inject
+    #easily and not have to max out a single command
+    def html_file
+      file = Tempfile.new(['inject', '.html'])
+      file.write(@html)
+      file.close #closing the file makes it accessible by phantom
+      file
+    end
+
+    #generate a tempfile with all the js that we need so that phantom can inject
+    #easily and not have to max out a single command
+    def js_file
+      jsfile = Tempfile.new(['inject', '.js'])
+      injectable_scripts.map do |script|
+        asset = find_asset_in_pipeline(script)
+        jsfile.write(asset.to_s) unless asset.nil?
+      end.compact
+      jsfile.close #closing the file makes it accessible by phantom
+      jsfile
     end
 
     def injectable_scripts

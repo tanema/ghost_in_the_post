@@ -5,10 +5,12 @@ module GhostInThePost
   describe MailGhost do
     let(:email) { Mail.new }
     let(:included_scripts) { ["application.js"] }
-    subject(:ghost) { MailGhost.new(email, included_scripts) }
+    subject(:ghost) { MailGhost.new(email, 1000, "wait", included_scripts) }
 
     it "takes an email and options" do
       expect(ghost.email).to eq(email)
+      expect(ghost.timeout).to eq(1000)
+      expect(ghost.wait_event).to eq("wait")
       expect(ghost.included_scripts).to eq(included_scripts)
     end
 
@@ -44,7 +46,7 @@ module GhostInThePost
 
       it "adjusts the html part using Roadie" do
         document = double "A document", transform: "transformed HTML"
-        expect(PhantomTransform).to receive(:new).with(html, included_scripts).and_return document
+        expect(PhantomTransform).to receive(:new).with(html,1000, "wait", included_scripts).and_return document
         ghost.execute
         expect(email.body.decoded).to eq("transformed HTML")
       end
@@ -62,7 +64,7 @@ module GhostInThePost
 
       it "adjusts the html part using Roadie" do
         document = double "A document", transform: "transformed HTML"
-        expect(PhantomTransform).to receive(:new).with(html, included_scripts).and_return document
+        expect(PhantomTransform).to receive(:new).with(html,1000, "wait", included_scripts).and_return document
         ghost.execute
         expect(email.html_part.body.decoded).to eq("transformed HTML")
       end

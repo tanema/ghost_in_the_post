@@ -1,9 +1,11 @@
 module GhostInThePost
   class MailGhost
-    attr_reader :email, :included_scripts
+    attr_reader :email, :included_scripts, :timeout, :wait_event
 
-    def initialize(email, included_scripts)
+    def initialize(email, timeout=nil, wait_event=nil, included_scripts=[])
       @email = email
+      @timeout = timeout
+      @wait_event = wait_event
       @included_scripts = Array(included_scripts).compact
     end
 
@@ -24,7 +26,7 @@ module GhostInThePost
     end
 
     def ghost_html(old_html)
-      PhantomTransform.new(old_html, included_scripts).transform
+      PhantomTransform.new(old_html, timeout, wait_event, included_scripts).transform
     end
   end
 end

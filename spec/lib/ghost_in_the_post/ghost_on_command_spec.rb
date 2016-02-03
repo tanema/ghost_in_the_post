@@ -12,7 +12,9 @@ module GhostInThePost
       end
       it "should create a MailGhost" do
         email.included_scripts = ["test"]
-        expect(MailGhost).to receive(:new).with(email, ["test"]).and_call_original
+        email.ghost_timeout = 1000
+        email.ghost_wait_event = "test"
+        expect(MailGhost).to receive(:new).with(email, 1000, "test", ["test"]).and_call_original
         email.ghost
       end
       it "should apply included scripts to the mail ghost" do
