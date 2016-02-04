@@ -72,7 +72,7 @@ GhostInThePost.config = {
   remove_js_tags: true,                       #remove script tags after javascript has been processed
   timeout: 1000,                              #timeout after js has been inserted to make sure it is run
   wait_event: 'ghost_in_the_post:done',       #an event that can be fire on the document to trigger finish of the processing early
-  debug: false,                               #will trigger an error if it cannot find a script and output the command to show you before preprocessing
+  debug: false,                               #will trigger an error if it cannot find a script and leave the tempfile of html if there was an error so you can review it
 }
 ```
 

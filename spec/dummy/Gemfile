@@ -2,6 +2,8 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.4'
 gem 'ghost_in_the_post', :path => '../..'
 
+gem 'jquery-rails'
+
 group :development do
   gem 'pry'
 end

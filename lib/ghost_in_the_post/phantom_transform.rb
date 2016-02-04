@@ -14,12 +14,15 @@ module GhostInThePost
 
     def transform
       @inliner.inline
-      p @inliner.html if GhostInThePost.debug
       begin
         htmlfile = html_file(@inliner.html)
         @inliner.html = checkError(IO.popen(command(htmlfile)){|io| io.read})
       ensure
-        htmlfile.unlink unless htmlfile.nil?
+        if GhostInThePost.debug and @has_error
+          p "Generated html can be found at #{htmlfile.path}"
+        elsif !htmlfile.nil?
+          htmlfile.unlink
+        end
       end
       @inliner.remove_all_script if GhostInThePost.remove_js_tags
       @inliner.html
@@ -47,7 +50,10 @@ module GhostInThePost
     end
 
     def checkError output
-      raise GhostJSError.new(output.gsub(ERROR_TAG, "")) if output.start_with?(ERROR_TAG)
+      if output.start_with?(ERROR_TAG) 
+        @has_error = true
+        raise GhostJSError.new(output.gsub(ERROR_TAG, "")) 
+      end
       output
     end
 
