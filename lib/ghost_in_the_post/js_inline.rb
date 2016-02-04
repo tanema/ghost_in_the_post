@@ -31,9 +31,7 @@ module GhostInThePost
 
     def create_script_element(script_blocks, body)
       return unless body
-      element = Nokogiri::XML::Node.new("script", body.document)
-      element.content = script_blocks.join("\n")
-      body.add_child(element)
+      body.add_child("<script>#{@dom.create_cdata(script_blocks.join("\n"))}</script>")
     end
 
     def generate_flat_js
