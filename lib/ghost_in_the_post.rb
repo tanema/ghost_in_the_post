@@ -6,17 +6,20 @@ module GhostInThePost
     :remove_js_tags,
     :timeout,
     :wait_event,
+    :debug,
   ]
   DEFAULT_TIMEOUT = 1000
   DEFAULT_WAIT_EVENT = "ghost_in_the_post:done"
   private_constant :ATTRIBUTE_NAMES
   cattr_reader(*ATTRIBUTE_NAMES)
 
+  #defaults
   @@phantomjs_path = nil #setting this to nil helps testing
   @@timeout = DEFAULT_TIMEOUT
   @@wait_event = DEFAULT_WAIT_EVENT
   @@includes = []
   @@remove_js_tags = true
+  @@debug = false
 
   def self.config=(new_config={})
     self.complain_about_unknown_keys(new_config.keys)
@@ -25,6 +28,7 @@ module GhostInThePost
     @@remove_js_tags = new_config[:remove_js_tags].nil? ? true : new_config[:remove_js_tags]
     @@timeout = new_config[:timeout] || DEFAULT_TIMEOUT
     @@wait_event = new_config[:wait_event] || DEFAULT_WAIT_EVENT
+    @@debug = new_config[:debug].nil? ? false : new_config[:debug]
     raise ArgumentError, "GhostInThePost.config.phantomjs_path is not set" if self.phantomjs_path.nil?
   end
 
@@ -45,6 +49,7 @@ end
  
 require "ghost_in_the_post/version"
 
+require "ghost_in_the_post/js_inline"
 require "ghost_in_the_post/phantom_transform"
 require "ghost_in_the_post/mail_ghost"
 

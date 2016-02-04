@@ -13,9 +13,10 @@ module GhostInThePost
     end
 
     describe "#initialize" do
-      it "should set html" do
-        pt = PhantomTransform.new(html, nil, nil, included_scripts)
-        expect(pt.instance_variable_get(:@html)).to eq(html)
+      it "should create a new JSInline" do
+        expect(JsInline).to receive(:new).with(html, included_scripts).and_call_original
+        t = PhantomTransform.new(html, nil, nil,included_scripts)
+        expect(t.instance_variable_get(:@inliner)).to be_a(JsInline)
       end
       it "should set the timeout" do
         pt = PhantomTransform.new(html, 45, nil, included_scripts)
@@ -33,84 +34,36 @@ module GhostInThePost
         pt = PhantomTransform.new(html, nil, nil, included_scripts)
         expect(pt.instance_variable_get(:@wait_event)).to eq(GhostInThePost.wait_event)
       end
-      it "should set included_scripts" do
-        pt = PhantomTransform.new(html, nil, nil, included_scripts)
-        expect(pt.instance_variable_get(:@included_scripts)).to eq(included_scripts)
-      end
-      it "should default included_scripts to an array" do
-        pt = PhantomTransform.new(html, nil, nil, nil)
-        expect(pt.instance_variable_get(:@included_scripts)).to eq([])
-      end
     end
 
     describe "#transform" do
-      let(:html_path) {"/this/is/htmlpath"}
-      let(:js_path) {"/this/is/js_path"}
-
       before :each do
-        allow(IO).to receive(:popen)
-        allow(Rails.application).to receive(:assets){{"application.js": js}}
-      end
-
-      it "should create a temp file for the html" do
-        file = Object.new
-        expect(subject).to receive(:html_file){file}
-        allow(file).to receive(:path){html_path}
-        expect(file).to receive(:unlink)
-        subject.transform
-      end
-
-      it "should create a temp file for the js" do
-        file = Object.new
-        expect(subject).to receive(:js_file){file}
-        allow(file).to receive(:path){js_path}
-        expect(file).to receive(:unlink)
-        subject.transform
+        @inliner = JsInline.new(html)
+        allow(@inliner).to receive(:inline)
+        allow(JsInline).to receive(:new){@inliner}
       end
 
       it "should call IO.popen with arguments" do
-        html_file = Object.new
-        expect(subject).to receive(:html_file){html_file}
-        allow(html_file).to receive(:path){html_path}
-        allow(html_file).to receive(:unlink)
-
-        js_file = Object.new
-        expect(subject).to receive(:js_file){js_file}
-        allow(js_file).to receive(:path){js_path}
-        allow(js_file).to receive(:unlink)
-
         expect(IO).to receive(:popen).with([
           GhostInThePost.phantomjs_path, 
           GhostInThePost::PhantomTransform::PHANTOMJS_SCRIPT, 
-          html_path,
-          GhostInThePost.remove_js_tags.to_s,
-          js_path,
+          @inliner.html,
           "1000",
           "ghost_in_the_post:done",
-        ])
-
+        ]).and_return html
         subject.transform
       end
 
-      it "should return the result of IO.popen with arguments" do
-        allow(IO).to receive(:popen) {"this is the end"}
-        expect(subject.transform).to eq("this is the end")
+      it "should check if there is an error from phantom" do
+        allow(IO).to receive(:popen).and_return PhantomTransform::ERROR_TAG
+        expect{subject.transform}.to raise_error GhostJSError
       end
 
-      it "should unlink file even if there was an error" do
-        html_file = Object.new
-        expect(subject).to receive(:html_file){html_file}
-        allow(html_file).to receive(:path){html_path}
-        expect(html_file).to receive(:unlink)
-
-        js_file = Object.new
-        expect(subject).to receive(:js_file){js_file}
-        allow(js_file).to receive(:path){js_path}
-        expect(js_file).to receive(:unlink)
-
-        allow(IO).to receive(:popen) {raise ArgumentError}
-
-        expect{subject.transform}.to raise_error ArgumentError
+      it "should remove script tags if config set" do
+        GhostInThePost.config = {phantomjs_path: "this/is/path", remove_js_tags: true}
+        allow(IO).to receive(:popen).and_return ""
+        expect(@inliner).to receive(:remove_all_script)
+        subject.transform
       end
 
     end
