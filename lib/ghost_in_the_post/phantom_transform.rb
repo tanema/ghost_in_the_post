@@ -15,21 +15,35 @@ module GhostInThePost
     def transform
       @inliner.inline
       p @inliner.html if GhostInThePost.debug
-      @inliner.html = checkError(IO.popen(command){|io| io.read})
+      begin
+        htmlfile = html_file(@inliner.html)
+        @inliner.html = checkError(IO.popen(command(htmlfile)){|io| io.read})
+      ensure
+        htmlfile.unlink unless htmlfile.nil?
+      end
       @inliner.remove_all_script if GhostInThePost.remove_js_tags
       @inliner.html
     end
 
     private
 
-    def command
+    def command html_file
       [
         GhostInThePost.phantomjs_path, 
         PHANTOMJS_SCRIPT, 
-        @inliner.html,
+        html_file.path,
         @timeout,
         @wait_event,
       ].map(&:to_s)
+    end
+
+    #generate a tempfile with all the html that we need so that phantom can inject
+    #easily and not have to max out a single command
+    def html_file(html)
+      file = Tempfile.new(['inject', '.html'])
+      file.write(html)
+      file.close #closing the file makes it accessible by phantom
+      file
     end
 
     def checkError output
