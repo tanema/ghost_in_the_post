@@ -75,7 +75,7 @@ GhostInThePost.config = {
 }
 ```
 
-You can also include a javascript file for individual mail methods
+You can also change the includes, timeout and wait event per method like the following
 
 ```ruby
 class NewsletterMailer < ActionMailer::Base
@@ -84,6 +84,8 @@ class NewsletterMailer < ActionMailer::Base
   def user_newsletter(user)
     #include extra emails for this email
     include_script "email.js", "util.js"
+    set_ghost_timeout 43
+    set_ghost_wait_event "done"
     mail to: user.email, subject: subject_for_user(user)
   end
 

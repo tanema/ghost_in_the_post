@@ -14,7 +14,6 @@ module GhostInThePost
       begin
         htmlfile = html_file()
         jsfile = js_file()
-        p command(htmlfile, jsfile)
         output = IO.popen(command(htmlfile, jsfile)){|io| io.read}
       ensure
         htmlfile.unlink unless htmlfile.nil?

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ghost_in_the_post (0.0.1)
+    ghost_in_the_post (0.0.2)
       rails (~> 4.2.3)
 
 GEM
@@ -46,7 +46,6 @@ GEM
     builder (3.2.2)
     coderay (1.1.0)
     concurrent-ruby (1.0.0)
-    concurrent-ruby (1.0.0-java)
     coveralls (0.8.10)
       json (~> 1.8)
       rest-client (>= 1.6.8, < 2)
