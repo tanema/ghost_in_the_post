@@ -1,6 +1,10 @@
 module GhostInThePost
+  
+  class GhostError < StandardError; end
+
   class PhantomTransform
     PHANTOMJS_SCRIPT = File.expand_path('../phantom/staticize.js', __FILE__)
+    ERROR_TAG = "[GHOSTINTHEPOST-STATICIZE-ERROR]"
 
     def initialize(html, timeout=nil, wait_event=nil, included_scripts=[])
       @html = html
@@ -15,6 +19,7 @@ module GhostInThePost
         htmlfile = html_file()
         jsfile = js_file()
         output = IO.popen(command(htmlfile, jsfile)){|io| io.read}
+        checkError(output)
       ensure
         htmlfile.unlink unless htmlfile.nil?
         jsfile.unlink unless jsfile.nil?
@@ -89,6 +94,10 @@ module GhostInThePost
 
     def asset_prefix
       ::Rails.application.try(:config).try(:assets).try(:prefix) || "/assets"
+    end
+
+    def checkError output
+      raise GhostError.new(output.gsub(ERROR_TAG, "")) if output.start_with?(ERROR_TAG)
     end
 
   end

@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    ghost_in_the_post (0.0.2)
+    ghost_in_the_post (0.0.4)
       rails (~> 4.2.3)
 
 GEM
