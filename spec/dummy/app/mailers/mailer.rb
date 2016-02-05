@@ -13,4 +13,9 @@ class Mailer < ActionMailer::Base
     end
   end
 
+  def timeout
+    set_ghost_timeout 60000
+    mail(to: 'example@example.org', subject: "Notification for you")
+  end
+
 end

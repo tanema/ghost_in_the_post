@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  </head>
+  <body>
+    <div id="json" data-json="%7B%22key%22%3A%22value%22%2C%22test%22%3A%5B%22one%22%2C%22two%22%2C%22three%22%5D%7D"></div>
+    <div id="test"></div>
+    <script>
+      (function(){
+        var testel = document.getElementById('test');
+        testel.innerHTML='complete';
+        var datael = document.getElementById('json');
+        var data;
+        data=JSON.parse(decodeURIComponent(datael.dataset.json));
+        if(!!data){
+          testel.innerHTML+=data.test
+        }
+        var evt = document.createEvent("Event")
+        evt.initEvent('test', true, true);
+        document.dispatchEvent(evt);
+      })()
+    </script>
+  </body>
+</html>
+
