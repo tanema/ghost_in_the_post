@@ -20,11 +20,11 @@ module GhostInThePost
     end
 
     def html=(html)
-      @dom = Nokogiri::HTML.parse(html)
+      @dom = Nokogiri::HTML.parse(URI.decode(html), nil, Encoding::UTF_8.to_s)
     end
 
-    def html
-      @dom.to_html
+    def html(is_x=false)
+      is_x ? @dom.to_xhtml : @dom.to_html
     end
 
     private
@@ -32,7 +32,7 @@ module GhostInThePost
     def generate_flat_js
       injectable_scripts.map do |script|
         asset = find_asset_in_pipeline(script)
-        if GhostInThePost.debug and asset.nil?
+        if GhostInThePost.raise_asset_errors and asset.nil?
           raise AssetNotFoundError.new("cannot find asset #{normalize_asset_name(script)}")
         end
         asset.to_s unless asset.nil?

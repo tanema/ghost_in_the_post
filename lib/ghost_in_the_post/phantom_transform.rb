@@ -25,7 +25,7 @@ module GhostInThePost
         end
       end
       @inliner.remove_all_script if GhostInThePost.remove_js_tags
-      @inliner.html
+      @inliner.html(true)
     end
 
     private
@@ -43,14 +43,14 @@ module GhostInThePost
     #generate a tempfile with all the html that we need so that phantom can inject
     #easily and not have to max out a single command
     def html_file(html)
-      file = Tempfile.new(['inject', '.html'])
+      file = Tempfile.new(['ghost_in_the_post', '.html'], encoding: Encoding::UTF_8)
       file.write(html)
       file.close #closing the file makes it accessible by phantom
       file
     end
 
     def checkError output
-      if output.start_with?(ERROR_TAG) 
+      if output.start_with?(ERROR_TAG) and GhostInThePost.raise_js_errors
         @has_error = true
         raise GhostJSError.new(output.gsub(ERROR_TAG, "")) 
       end

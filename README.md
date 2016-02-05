@@ -70,9 +70,11 @@ GhostInThePost.config = {
   phantomjs_path: "/usr/local/bin/phantomjs", #[required] path of phantomjs, if this is not set there will be an error
   includes: ["application.js"],               #global include of a javascript file, this will be injected into every email
   remove_js_tags: true,                       #remove script tags after javascript has been processed
+  raise_js_errors: true,                      #Raise a GhostInThePost::GhostJSError if there is an error in the js included in the email
+  raise_asset_errors: true,                   #Raise an GhostInThePost::AssetNotFoundError if an script provided for running cannot be found
   timeout: 1000,                              #timeout after js has been inserted to make sure it is run
   wait_event: 'ghost_in_the_post:done',       #an event that can be fire on the document to trigger finish of the processing early
-  debug: false,                               #will trigger an error if it cannot find a script and leave the tempfile of html if there was an error so you can review it
+  debug: false,                               #will give a link to the temp file of html for review if there was an error
 }
 ```
 

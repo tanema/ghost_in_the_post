@@ -6,19 +6,23 @@ module GhostInThePost
     :remove_js_tags,
     :timeout,
     :wait_event,
+    :raise_js_errors,
+    :raise_asset_errors,
     :debug,
   ]
   DEFAULT_TIMEOUT = 1000
   DEFAULT_WAIT_EVENT = "ghost_in_the_post:done"
   private_constant :ATTRIBUTE_NAMES
-  cattr_reader(*ATTRIBUTE_NAMES)
+  cattr_accessor(*ATTRIBUTE_NAMES)
 
-  #defaults
+  #=======Defaults=========
   @@phantomjs_path = nil #setting this to nil helps testing
   @@timeout = DEFAULT_TIMEOUT
   @@wait_event = DEFAULT_WAIT_EVENT
   @@includes = []
   @@remove_js_tags = true
+  @@raise_js_errors = true
+  @@raise_asset_errors = true
   @@debug = false
 
   def self.config=(new_config={})
@@ -26,6 +30,8 @@ module GhostInThePost
     @@phantomjs_path = new_config[:phantomjs_path]
     @@includes = Array(new_config[:includes])
     @@remove_js_tags = new_config[:remove_js_tags].nil? ? true : new_config[:remove_js_tags]
+    @@raise_js_errors = new_config[:raise_js_errors].nil? ? true : new_config[:raise_js_errors]
+    @@raise_asset_errors = new_config[:raise_asset_errors].nil? ? true : new_config[:raise_asset_errors]
     @@timeout = new_config[:timeout] || DEFAULT_TIMEOUT
     @@wait_event = new_config[:wait_event] || DEFAULT_WAIT_EVENT
     @@debug = new_config[:debug].nil? ? false : new_config[:debug]
