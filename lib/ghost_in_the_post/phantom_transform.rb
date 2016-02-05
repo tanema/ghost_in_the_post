@@ -25,7 +25,7 @@ module GhostInThePost
         end
       end
       @inliner.remove_all_script if GhostInThePost.remove_js_tags
-      @inliner.html(true)
+      @inliner.html
     end
 
     private

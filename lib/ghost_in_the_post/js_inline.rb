@@ -20,11 +20,11 @@ module GhostInThePost
     end
 
     def html=(html)
-      @dom = Nokogiri::HTML.parse(URI.decode(html), nil, Encoding::UTF_8.to_s)
+      @dom = Nokogiri::HTML.parse(html, nil, Encoding::UTF_8.to_s)
     end
 
-    def html(is_x=false)
-      is_x ? @dom.to_xhtml : @dom.to_html
+    def html
+      @dom.to_html
     end
 
     private
