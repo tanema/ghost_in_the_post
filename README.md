@@ -1,5 +1,11 @@
 # GhostInThePost #
 
+[![Build history and status](https://secure.travis-ci.org/tanema/ghost_in_the_post.png)](http://travis-ci.org/#!/tanema/ghost_in_the_post)
+[![Coverage Status](https://coveralls.io/repos/github/tanema/ghost_in_the_post/badge.svg?branch=master)](https://coveralls.io/github/tanema/ghost_in_the_post?branch=master)
+[![Code Climate](https://codeclimate.com/github/tanema/ghost_in_the_post/badges/gpa.svg)](https://codeclimate.com/github/tanema/ghost_in_the_post)
+[![Gem Version](https://badge.fury.io/rb/ghost_in_the_post.svg)](https://badge.fury.io/rb/ghost_in_the_post)
+[![Dependency Status](https://gemnasium.com/tanema/ghost_in_the_post.svg)](https://gemnasium.com/tanema/ghost_in_the_post)
+
 > Using Phantomjs to pre-run javascript in emails
 
 GhostInThePost uses [Phantomjs](http://phantomjs.org/) to run javascript in the html of your emails so that you can render mustache templates and run scripts that will change the DOM before sending. GhostInThePost will also remove script tags after everything is run so it wont be included in the final email.
