@@ -12,7 +12,7 @@ module GhostInThePost
     end
 
     def inline
-      create_script_element(generate_flat_js, @dom.at_xpath('html/body'))
+      @dom.at_xpath('html/body').add_child("<script>#{generate_flat_js}</script>")
     end
 
     def remove_all_script
@@ -29,11 +29,6 @@ module GhostInThePost
 
     private
 
-    def create_script_element(script_blocks, body)
-      return unless body
-      body.add_child("<script>#{@dom.create_cdata(script_blocks.join("\n"))}</script>")
-    end
-
     def generate_flat_js
       injectable_scripts.map do |script|
         asset = find_asset_in_pipeline(script)
@@ -41,7 +36,7 @@ module GhostInThePost
           raise AssetNotFoundError.new("cannot find asset #{normalize_asset_name(script)}")
         end
         asset.to_s unless asset.nil?
-      end.compact
+      end.compact.join("\n")
     end
 
     def injectable_scripts
