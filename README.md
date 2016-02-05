@@ -1,7 +1,7 @@
 # GhostInThePost #
 
-[![Build history and status](https://secure.travis-ci.org/tanema/ghost_in_the_post.png)](http://travis-ci.org/#!/tanema/ghost_in_the_post)
-[![Coverage Status](https://coveralls.io/repos/github/tanema/ghost_in_the_post/badge.svg?branch=master)](https://coveralls.io/github/tanema/ghost_in_the_post?branch=master)
+[![Build history](https://secure.travis-ci.org/tanema/ghost_in_the_post.png)](http://travis-ci.org/#!/tanema/ghost_in_the_post)
+[![coverage status](https://coveralls.io/repos/github/tanema/ghost_in_the_post/badge.svg?branch=master)](https://coveralls.io/github/tanema/ghost_in_the_post?branch=master)
 [![Code Climate](https://codeclimate.com/github/tanema/ghost_in_the_post/badges/gpa.svg)](https://codeclimate.com/github/tanema/ghost_in_the_post)
 [![Gem Version](https://badge.fury.io/rb/ghost_in_the_post.svg)](https://badge.fury.io/rb/ghost_in_the_post)
 [![Dependency Status](https://gemnasium.com/tanema/ghost_in_the_post.svg)](https://gemnasium.com/tanema/ghost_in_the_post)
