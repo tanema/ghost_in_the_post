@@ -2,6 +2,10 @@ language: ruby
 rvm:
   - 2.0
   - 2.1
-  - 2.2
+  - 2.2.1
   - jruby-19mode
 script: bundle exec rspec spec
+addons:
+  apt:
+    packages:
+    - libgmp-dev
