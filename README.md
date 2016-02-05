@@ -60,6 +60,32 @@ class NewsletterMailer < ActionMailer::Base
 end
 ```
 
+### Usage Notes ###
+
+#### Templating Warning ####
+
+The html is processed with nokogiri and as such is validated html. However, this means that it will url-encode attributes. For instance `<img src="{{source}}"/>` will be transformed into `<img src=\"%7B%7Bsource%7D%7D\">`
+It is recomended that you precompile your js templates (using hogan-assets or something similar and include it as js) so that you are not depending on text that is url-encoded.
+
+#### JSON from the DOM ####
+If you are parsing JSON from a data attribute, you need to decode the string first:
+
+Instead of this:
+
+```javascript
+var el = document.getElementById('myDiv');
+var data = JSON.parse(el.dataset.json);
+```
+
+do this:
+
+```javascript
+var el = document.getElementById('myDiv');
+var data = JSON.parse(decodeURIComponent(el.dataset.json));
+```
+
+This will make your code work both in the email and in a web browser
+
 ### Configuration ###
 
 GhostInThePost can be configured in an initializer
