@@ -127,6 +127,13 @@ class NewsletterMailer < ActionMailer::Base
 end
 ```
 
+### Why? why? why? ###
+
+I had many, very interactive components that were rendered client side with hogan and I was faced with reproducing complicated javascript logic in ruby just to support an html template, only for emails.
+It seems silly to create that much redundant code in several places. So I did this instead.
+
+As such this tool should probably be used in limited quantities. 
+
 ### Inspiration
 
 This gem took a lot of design queues from [roadie-rails](https://github.com/Mange/roadie-rails) and works along side of it so you can preprocess css and pre-run js all at once!
