@@ -5,6 +5,7 @@ module GhostInThePost
   class AssetNotFoundError < StandardError; end
   
   class JsInline
+    SCRIPT_ID = "ghost_in_the_post_script_container"
 
     def initialize(html, included_scripts=[])
       self.html = html
@@ -12,11 +13,15 @@ module GhostInThePost
     end
 
     def inline
-      @dom.at_xpath('html/body').add_child("<script>#{generate_flat_js}</script>")
+      @dom.at_xpath('html/body').add_child("<script id='#{SCRIPT_ID}'>#{generate_flat_js}</script>")
     end
 
     def remove_all_script
       @dom.css('script').map(&:remove)
+    end
+
+    def remove_inlined
+      @dom.css("##{SCRIPT_ID}").map(&:remove)
     end
 
     def html=(html)

@@ -33,6 +33,7 @@ module GhostInThePost
       it "should inline js" do
         subject.inline
         expect(subject.html).to include(js)
+        expect(subject.html).to include("<script id=\"#{JsInline::SCRIPT_ID}\"")
       end
     end
 
@@ -40,6 +41,14 @@ module GhostInThePost
       it "should remove all js" do
         subject.remove_all_script
         expect(subject.html).not_to include("<script")
+      end
+    end
+
+    describe "#remove_inlined" do
+      it "should remove just the inlined js" do
+        subject.remove_inlined
+        expect(subject.html).to include("<script")
+        expect(subject.html).not_to include("<script id=\"#{JsInline::SCRIPT_ID}\"")
       end
     end
 

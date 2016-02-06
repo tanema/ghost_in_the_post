@@ -24,7 +24,11 @@ module GhostInThePost
           htmlfile.unlink
         end
       end
-      @inliner.remove_all_script if GhostInThePost.remove_js_tags
+      if GhostInThePost.remove_js_tags
+        @inliner.remove_all_script 
+      else
+        @inliner.remove_inlined
+      end
       @inliner.html
     end
 

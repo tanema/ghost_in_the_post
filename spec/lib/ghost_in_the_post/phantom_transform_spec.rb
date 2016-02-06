@@ -74,6 +74,13 @@ module GhostInThePost
         subject.transform
       end
 
+      it "should remove just inlined js if config not set" do
+        GhostInThePost.config = {phantomjs_path: "this/is/path", remove_js_tags: false}
+        allow(IO).to receive(:popen).and_return ""
+        expect(@inliner).to receive(:remove_inlined)
+        subject.transform
+      end
+
       it "should create a temp file for the html" do
         allow(IO).to receive(:popen).and_return ""
         file = Object.new
