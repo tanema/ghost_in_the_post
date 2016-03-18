@@ -6,6 +6,13 @@ module GhostInThePost
   
   class JsInline
     SCRIPT_ID = "ghost_in_the_post_script_container"
+ 
+    STRATEGIES = [
+      GhostInThePost::JSLoaders::CacheLoader,
+      GhostInThePost::JSLoaders::FileSystemLoader,
+      GhostInThePost::JSLoaders::AssetPipelineLoader,
+      GhostInThePost::JSLoaders::NetworkLoader
+    ]
 
     def initialize(html, included_scripts=[])
       self.html = html
@@ -36,7 +43,7 @@ module GhostInThePost
 
     def generate_flat_js
       injectable_scripts.map do |script|
-        asset = find_asset_in_pipeline(script)
+        asset = find_js(script)
         if GhostInThePost.raise_asset_errors and asset.nil?
           raise AssetNotFoundError.new("cannot find asset #{normalize_asset_name(script)}")
         end
@@ -53,34 +60,11 @@ module GhostInThePost
       doc_scripts + GhostInThePost.includes + @included_scripts
     end
  
-    def find_asset_in_pipeline(name)
-      normalized_name = normalize_asset_name(name)
-      Rails.application.assets[normalized_name] || Rails.application.assets[remove_asset_digest(normalized_name)]
-    end
-
-    def normalize_asset_name(href)
-      remove_asset_prefix(href.split('?').first)
-    end
-
-    DIGEST_PATTERN = /
-      -                # Digest comes after a dash
-      (?:
-       [a-z0-9]{32} |  # Old style is 32 character hash
-       [a-z0-9]{64}    # New style is 64 characters
-      )
-      \.               # Dot for the file extension
-    /x.freeze
-
-    def remove_asset_digest(path)
-      path.gsub(DIGEST_PATTERN, '.')
-    end
-
-    def remove_asset_prefix(path)
-      path.sub(Regexp.new("^#{Regexp.quote(asset_prefix)}/?"), "")
-    end
-
-    def asset_prefix
-      ::Rails.application.try(:config).try(:assets).try(:prefix) || "/assets"
+    def find_js(url)
+      STRATEGIES.each do |strategy|
+        js = strategy.load(url)
+        return js.force_encoding('UTF-8') if js
+      end
     end
 
   end

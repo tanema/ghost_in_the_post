@@ -47,6 +47,7 @@ GEM
     builder (3.2.2)
     coderay (1.1.0)
     concurrent-ruby (1.0.0)
+    concurrent-ruby (1.0.0-java)
     coveralls (0.8.10)
       json (~> 1.8)
       rest-client (>= 1.6.8, < 2)
@@ -209,6 +210,3 @@ DEPENDENCIES
   guard-rspec
   rspec (~> 3.0)
   rspec-rails
-
-BUNDLED WITH
-   1.10.6

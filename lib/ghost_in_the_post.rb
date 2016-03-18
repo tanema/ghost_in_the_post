@@ -54,6 +54,7 @@ end
  
 require "ghost_in_the_post/version"
 
+require "ghost_in_the_post/js_loaders"
 require "ghost_in_the_post/js_inline"
 require "ghost_in_the_post/phantom_transform"
 require "ghost_in_the_post/mail_ghost"
