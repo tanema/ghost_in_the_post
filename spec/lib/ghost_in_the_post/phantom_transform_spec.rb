@@ -9,6 +9,7 @@ module GhostInThePost
     subject {PhantomTransform.new(html, nil, nil,included_scripts)}
 
     before :each do
+      allow(File).to receive(:exist?).with("this/is/path"){true}
       GhostInThePost.config = {phantomjs_path: "this/is/path"}
       allow_message_expectations_on_nil
     end

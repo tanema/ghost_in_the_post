@@ -32,11 +32,11 @@ module GhostInThePost
     end
 
     def html=(html)
-      @dom = Nokogiri::HTML.parse(html, nil, Encoding::UTF_8.to_s)
+      @dom = Nokogiri::HTML.parse html
     end
 
     def html
-      @dom.to_html
+      @dom.dup.to_html
     end
 
     private
@@ -47,7 +47,10 @@ module GhostInThePost
         if GhostInThePost.raise_asset_errors and asset.nil?
           raise AssetNotFoundError.new("cannot find asset #{normalize_asset_name(script)}")
         end
-        asset.to_s unless asset.nil?
+        unless asset.nil?
+          GhostInThePost::JSLoaders::CacheLoader.store(script, asset.to_s)
+          asset.to_s
+        end
       end.compact.join("\n")
     end
 

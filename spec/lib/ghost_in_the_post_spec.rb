@@ -5,6 +5,9 @@ describe GhostInThePost do
   before :each do
     #reload so that variables are set to initials values
     quiet_load 'ghost_in_the_post.rb'
+    allow(File).to receive(:exist?){|path|
+      path == "test_path"
+    }
   end
   
   describe "#create=" do
@@ -20,6 +23,11 @@ describe GhostInThePost do
     it "should raise ArgumentError if not path was set for phantom" do
       expect do
         GhostInThePost.config = {} 
+      end.to raise_error(ArgumentError)
+    end
+    it "should raise ArgumentError if path was set for phantom but it is not at that path" do
+      expect do
+        GhostInThePost.config = {phantomjs_path: "nope"} 
       end.to raise_error(ArgumentError)
     end
     it "should set includes" do

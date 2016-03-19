@@ -10,6 +10,10 @@ module GhostInThePost
     let(:included_scripts){["application.js"]}
     subject {JsInline.new(html, included_scripts)}
 
+    before :each do 
+      allow(File).to receive(:exist?){true}
+    end
+
     describe "#initialize" do
       it "should assign html" do
         expect(Nokogiri::HTML).to receive(:parse)
@@ -27,13 +31,18 @@ module GhostInThePost
 
     describe "#inline" do
       before :each do
-        allow(subject).to receive(:find_asset_in_pipeline).with("application.js").and_return(js)
+        allow(subject).to receive(:find_js).with("application.js").and_return(js)
       end
 
       it "should inline js" do
         subject.inline
         expect(subject.html).to include(js)
         expect(subject.html).to include("<script id=\"#{JsInline::SCRIPT_ID}\"")
+      end
+
+      it "should cache the script" do
+        expect(GhostInThePost::JSLoaders::CacheLoader).to receive(:store).with("application.js", js)
+        subject.inline
       end
     end
 

@@ -16,11 +16,20 @@ module GhostInThePost
           ::Rails.application.respond_to?(:assets) &&
           ::Rails.application.assets
       end
+ 
+      DIGEST_PATTERN = /
+        -                # Digest comes after a dash
+        (?:
+         [a-z0-9]{32} |  # Old style is 32 character hash
+         [a-z0-9]{64}    # New style is 64 characters
+        )
+        \.               # Dot for the file extension
+      /x.freeze
 
       def file_name(url)
         URI(url).path
           .sub("#{::Rails.configuration.assets.prefix}/", '')
-          .sub(/-(\h{32}|\h{64})\.js$/, '.js')
+          .gsub(DIGEST_PATTERN, '.')
       end
     end
   end

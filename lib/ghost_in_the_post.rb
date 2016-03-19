@@ -30,8 +30,9 @@ module GhostInThePost
     new_config.each do |key, value|
       self.send("#{key}=", value)
     end
-    raise ArgumentError, "GhostInThePost.config.phantomjs_path is not set" if self.phantomjs_path.nil?
+    raise ArgumentError, "phantomjs not found at path `#{@@phantomjs_path}` provided to GhostInThePost" unless File.exist?(phantomjs_path)
   end
+
 
   def self.phantomjs_path
     @@phantomjs_path or raise ArgumentError, "GhostInThePost.config.phantomjs_path is not set"
